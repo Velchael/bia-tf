@@ -27,3 +27,7 @@ output "rds_secrets" {
   description = "Secrets associado ao RDS"
   value=tolist(aws_db_instance.bia.master_user_secret)[0].secret_arn
 }
+
+output "bia_repo_url" {
+  value = aws_ecr_repository.bia.repository_url
+}
