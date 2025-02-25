@@ -70,3 +70,9 @@ importar RDS desde out_deb.tf
 terraform state mv aws_security_group.bia.web aws_security_group.bia-web
 
 terraform import aws_security_group.bia_web sg-02cecfede88199c2c importar SG directamente
+................................................
+Aula 11 todas las actualizaciones fuero echas hast el dia de hoy 24/02/25 rama donde trabaje aula 7
+
+................................rds
+  db_subnet_group_name                  = "default-vpc-0c5f464e37ffc5d93"
+

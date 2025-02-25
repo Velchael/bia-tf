@@ -170,7 +170,7 @@ resource "aws_security_group" "bia_db" {
 resource "aws_security_group" "bia_dev" {
   name        = "bia-dev"
   description = "acesso do bia-dev"
-  vpc_id      = "vpc-0c5f464e37ffc5d93"
+  vpc_id      = local.vpc_id
 
   ingress {
     description = "acesso geral"
