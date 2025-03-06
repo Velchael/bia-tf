@@ -76,3 +76,68 @@ Aula 11 todas las actualizaciones fuero echas hast el dia de hoy 24/02/25 rama d
 ................................rds
   db_subnet_group_name                  = "default-vpc-0c5f464e37ffc5d93"
 
+................ tareas en ejecucion del cluster reconfiguración de tu clúster o la creación de nuevos recursos, como nuevas Capacity Providers, Auto Scaling Groups o ECS
+aws ecs list-tasks --cluster cluster-bia
+aws ecs put-cluster-capacity-providers --cluster cluster-bia --capacity-providers [] --default-capacity-provider-strategy [] vinculacion con el cluster
+ aws ecs delete-capacity-provider --capacity-provider cluster-bia eliminar el capasite provider vinculado al cluster
+..........................Si estos Launch Templates están vinculados al Auto Scaling Group (ASG) que utilizaba el cluster-bia, entonces debes eliminarlos antes de ejecutar
+velchael@Stalin-1OMD8BTE:/mnt/c/Users/55119/terraform/terraforme6/bia-tf$ aws ec2 describe-launch-templates --query "LaunchTemplates[*].LaunchTemplateName"
+[
+    "cluster-bia-web-20250305135118081000000001"
+]
+......... comando para ver la vinculacion de asg con launch_template
+velchael@Stalin-1OMD8BTE:/mnt/c/Users/55119/terraform/terraforme6/bia-tf$ aws autoscaling describe-auto-scaling-groups --query "AutoScalingGroups[*].{Name:AutoScalingGroupName, LaunchTemplate:LaunchTemplate.LaunchTemplateName}"
+[
+    {
+        "Name": "cluster-ecs-bia-asg-20250305135125823600000003",
+        "LaunchTemplate": "cluster-bia-web-20250305135118081000000001"
+    }
+]
+.................... comando terraform apply
+terraform apply -auto-approve
+
+Esto garantizará que Terraform cree un nuevo Cluster ECS, Auto Scaling Group, Capacity Provider y Launch Template sin conflictos. 
+.......................  configuraciones conflictivas en tu aws_launch_template.tf
+Estás usando vpc_security_group_ids fuera de network_interfaces, lo cual solo es válido si no defines explícitamente network_interfaces.
+
+data "aws_ssm_parameter" "ecs_node_ami" {
+  name = "/aws/service/ecs/optimized-ami/amazon-linux-2/recommended/image_id"
+}
+
+resource "aws_launch_template" "ecs_ec2" {
+  name_prefix            = "cluster-bia-web-"
+  image_id               = data.aws_ssm_parameter.ecs_node_ami.value
+  instance_type          = "t3.micro"
+  vpc_security_group_ids = [ aws_security_group.bia_web.id ] 
+  iam_instance_profile { arn = aws_iam_instance_profile.ecs_node.arn }
+  monitoring { enabled = false }
+
+  network_interfaces {
+    associate_public_ip_address = true  # Habilita la IP pública
+  }
+  
+  user_data = base64encode(<<-EOF
+      #!/bin/bash
+      echo ECS_CLUSTER=${aws_ecs_cluster.cluster-bia.name} >> /etc/ecs/ecs.config;
+    EOF
+  )
+}
+............. codigo actualizado
+
+.............imprimir desde mi instacia cluster mis variables de anviente
+docker exec aa7 printenv
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+HOSTNAME=aa77f40a13aa
+AWS_EXECUTION_ENV=AWS_ECS_EC2
+DB_PORT=5432
+DB_REGION=us-east-1
+DB_SECRET_NAME=rds!db-dca317e4-4d20-4540-805a-5efdd20a47c5
+AWS_CONTAINER_CREDENTIALS_RELATIVE_URI=/v2/credentials/be6a8219-331d-4b5a-94ee-383dfb4040aa
+ECS_CONTAINER_METADATA_URI=http://169.254.170.2/v3/7ed1620c-e532-46e8-ade1-e742fc322a90
+DB_HOST=bia.cf8k8gcse58z.us-east-1.rds.amazonaws.com
+DEBUG_SECRET=true
+ECS_CONTAINER_METADATA_URI_V4=http://169.254.170.2/v4/7ed1620c-e532-46e8-ade1-e742fc322a90
+ECS_AGENT_URI=http://169.254.170.2/api/7ed1620c-e532-46e8-ade1-e742fc322a90
+NODE_VERSION=22.14.0
+YARN_VERSION=1.22.22
+HOME=/root
