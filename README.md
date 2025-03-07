@@ -141,3 +141,12 @@ ECS_AGENT_URI=http://169.254.170.2/api/7ed1620c-e532-46e8-ade1-e742fc322a90
 NODE_VERSION=22.14.0
 YARN_VERSION=1.22.22
 HOME=/root
+..................................... para chequear la comunicacion con el RDS
+ec2-user@ip-172-31-32-66 bia]$ docker compose exec server bash -c 'npx sequelize db:drop'
+
+Sequelize CLI [Node: 22.14.0, CLI: 6.6.2, ORM: 6.37.0]
+
+Vou trabalhar com o secrets rds!db-dca317e4-4d20-4540-805a-5efdd20a47c5
+Loaded configuration file "config/database.js".
+Database bia dropped.
+................................

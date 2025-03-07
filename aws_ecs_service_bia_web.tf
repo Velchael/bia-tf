@@ -17,7 +17,15 @@ resource "aws_ecs_service" "bia" {
   deployment_minimum_healthy_percent = 0
   deployment_maximum_percent = 100
 
+  depends_on = [aws_lb_target_group.tg-bia]
+
   lifecycle {
     ignore_changes = [ desired_count ]
+  }
+
+   load_balancer {
+    target_group_arn = aws_lb_target_group.tg-bia.arn
+    container_name   = "bia"
+    container_port   = 8080
   }
 }

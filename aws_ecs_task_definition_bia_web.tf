@@ -6,7 +6,8 @@ resource "aws_ecs_task_definition" "bia-web" {
       name         = "bia",
       image        = "${aws_ecr_repository.bia.repository_url}:latest",
       essential    = true
-      portMappings = [{ containerPort = 8080, hostPort = 80 }],
+      #portMappings = [{ containerPort = 8080, hostPort = 80 }], para aula 17 com alb
+      portMappings = [{ containerPort = 8080, hostPort = 0 }],
       cpu    = 1024
       memoryReservation = 400
       environment = [

@@ -10,7 +10,7 @@ resource "aws_launch_template" "ecs_ec2" {
   # Mueve los grupos de seguridad dentro de network_interfaces
   network_interfaces {
     associate_public_ip_address = true  # ✅ Habilita la IP pública
-    security_groups             = [aws_security_group.bia_web.id]  # ✅ Define aquí los grupos de seguridad
+    security_groups             = [aws_security_group.bia_ec2.id]  # ✅ Define aquí los grupos de seguridad
   }
 
   iam_instance_profile {
